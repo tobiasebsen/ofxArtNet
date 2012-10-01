@@ -1,0 +1,27 @@
+<install>
+
+	<version>0.1</version>
+	<author>Tobias Ebsen</author>
+	<url></url>
+
+    <requires>
+	</requires>
+    
+	<add>	
+		<src>
+			<folder name="addons/ofxArtNet/src">			
+				<file>../../../addons/ofxArtNet/src/ofxArtNet.h</file>
+				<file>../../../addons/ofxArtNet/src/ofxArtNet.cpp</file>
+			</folder>
+		</src>
+
+		<include>
+			<path>../../../addons/ofxArtNet/lib</path>
+		</include>
+		
+		<link>
+		</link>
+
+	</add>
+	
+</install>
