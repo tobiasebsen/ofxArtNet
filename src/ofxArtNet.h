@@ -52,14 +52,14 @@ public:
 	void init(string ip = "", bool verbose = false);
 
 	void setOEM(uint8 high, uint8 low);
-
 	void setNodeType(artnetNodeType nodeType);
 	void setShortName(string shortName);
 	void setLongName(string longName);
+	void setSubNet(int subNet);
+	void setBroadcastLimit(int bcastlimit);
 	
 	void setPortType(int port, artnetPortIO io, artnetPortData data);
 	void setPortAddress(int port, artnetPortType portType, uint8_t address);
-	void setPortSubnet(int port);
 	
 	void start();
 	void stop();
@@ -69,8 +69,12 @@ public:
 	void sendDmx(int port, void* data, int size);
 	void sendDmx(ofxArtNetDmxData& dmx);
 	void sendDmxRaw(int universe, void* data, int size);
+	void sendAddress(ofxArtNetNodeEntry* entry);
 	
-	ofEvent<ofxArtNetNodeEntry> pollReply;
+	int getNodeCount();
+	ofxArtNetNodeEntry* getNode(int n);
+	
+	ofEvent<ofxArtNetNodeEntry*> pollReply;
 	ofEvent<ofxArtNetDmxData> dmxData;
 
 private:
@@ -81,6 +85,6 @@ private:
 	int static dmx_handler(artnet_node n, int port, void *d);
 
 	artnet_node node;
-	vector<ofxArtNetNodeEntry> nodes;
+	vector<ofxArtNetNodeEntry*> nodes;
 	vector<ofxArtNetInterface> interfaces;
 };

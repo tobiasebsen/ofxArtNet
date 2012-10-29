@@ -47,6 +47,14 @@ void ofxArtNet::setLongName(string longname) {
 	artnet_set_long_name(node, longname.c_str());
 }
 ////////////////////////////////////////////////////////////
+void ofxArtNet::setSubNet(int subnet) {
+	artnet_set_subnet_addr(node, subnet);
+}
+////////////////////////////////////////////////////////////
+void ofxArtNet::setBroadcastLimit(int bcastlimit) {
+	artnet_set_bcast_limit(node, bcastlimit);
+}
+////////////////////////////////////////////////////////////
 void ofxArtNet::setPortType(int port, artnetPortIO io, artnetPortData data) {
 	artnet_set_port_type(node, port, (artnet_port_settings_t)io, (artnet_port_data_code)data);
 }
@@ -74,6 +82,8 @@ void ofxArtNet::close() {
 }
 ////////////////////////////////////////////////////////////
 void ofxArtNet::sendPoll(string ip) {
+	for (int i=0; i<nodes.size(); i++)
+		delete nodes[i];
 	nodes.clear();
 	artnet_send_poll(node, ip.empty() ? NULL : ip.c_str(), ARTNET_TTM_DEFAULT);
 }
@@ -131,9 +141,9 @@ int ofxArtNet::reply_handler(artnet_node node, void *pp, void *d) {
 	if(nodes_found == 0)
 		ne = artnet_nl_first(nl);
 	else
-		artnet_node_entry ne = artnet_nl_next(nl);
+		ne = artnet_nl_next(nl);
 
-	ofxArtNetNodeEntry entry(ne);
+	ofxArtNetNodeEntry* entry = new ofxArtNetNodeEntry(ne);
 	t->nodes.push_back(entry);
 	ofNotifyEvent(t->pollReply, entry, t);
 	

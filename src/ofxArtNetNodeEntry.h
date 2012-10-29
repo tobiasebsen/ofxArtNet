@@ -13,11 +13,25 @@
 
 class ofxArtNetNodeEntry {
 public:
-	ofxArtNetNodeEntry(void* node_entry);
+	~ofxArtNetNodeEntry();
 	
-	string	ip;
-	int		subnet;
-	string	shortName;
-	string	longName;
-	string	mac;
+	string	getIp();
+	uint16	getSubnet();
+	string	getShortName();
+	string	getLongName();
+	uint16	getPortCount();
+	uint8	getPortType(int port);
+	string	getPortTypeName(int port);
+	bool	isPortInput(int port);
+	bool	isPortOutput(int port);
+	uint8	getUniverseInput(int port);
+	uint8	getUniverseOutput(int port);
+	string	getMac();
+	
+private:
+	friend class ofxArtNet;
+
+	ofxArtNetNodeEntry(void* node_entry);
+
+	void* node_entry;
 };
