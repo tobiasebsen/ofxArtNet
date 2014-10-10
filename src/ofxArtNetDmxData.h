@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ofMain.h"
+
 class ofxArtNetDmxData {
 public:
 	

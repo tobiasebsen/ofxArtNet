@@ -695,6 +695,7 @@ int artnet_raw_send_dmx(artnet_node vn,
                         const uint8_t *data) {
   node n = (node) vn;
   artnet_packet_t p;
+  int ret;
 
   check_nullnode(vn);
 
@@ -728,7 +729,43 @@ int artnet_raw_send_dmx(artnet_node vn,
   p.data.admx.length = short_get_low_byte(length);
   memcpy(&p.data.admx.data, data, length);
 
-  return artnet_net_send(n, &p);
+  if (n->state.bcast_limit == 0) {
+    if ((ret = artnet_net_send(n, &p)))
+      return ret;
+  } else {
+    int nodes;
+    // find the number of ports for this uni
+    SI *ips = malloc(sizeof(SI) * n->state.bcast_limit);
+
+    if (!ips) {
+      // Fallback to broadcast mode
+      if ((ret = artnet_net_send(n, &p)))
+        return ret;
+    }
+
+    nodes = find_nodes_from_uni(&n->node_list,
+                                uni,
+                                ips,
+                                n->state.bcast_limit);
+
+    if (nodes > n->state.bcast_limit) {
+      // fall back to broadcast
+      free(ips);
+      if ((ret = artnet_net_send(n, &p))) {
+        return ret;
+      }
+    } else {
+      // unicast to the specified nodes
+      int i;
+      for (i =0; i < nodes; i++) {
+        p.to = ips[i];
+        artnet_net_send(n, &p);
+      }
+      free(ips);
+    }
+  }
+
+  return ARTNET_EOK;
 }
 
 
